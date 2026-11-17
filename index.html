@@ -1,1189 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tonmoy Das — AI Engineer</title>
-<meta name="description" content="Tonmoy Das — AI Engineer at Qanun Limited. Published researcher with ACL 2026. Building RAG pipelines, LLM systems, and multilingual document intelligence." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #09090f;
-    --surface: #0f0f1a;
-    --surface2: #14141f;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8e8f0;
-    --muted: #6b6b8a;
-    --accent: #7c6aff;
-    --accent2: #00d4aa;
-    --accent3: #ff6b6b;
-    --glow: rgba(124,106,255,0.15);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'JetBrains Mono', monospace;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* CUSTOM CURSOR */
-  .cursor {
-    position: fixed; top: 0; left: 0;
-    width: 12px; height: 12px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: transform 0.1s, background 0.2s, width 0.2s, height 0.2s;
-  }
-  .cursor-ring {
-    position: fixed; top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(124,106,255,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: transform 0.15s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
-  }
-  body:hover .cursor { opacity:1; }
-
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 20px 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
-  }
-  nav.scrolled {
-    border-color: var(--border);
-    background: rgba(9,9,15,0.8);
-    backdrop-filter: blur(16px);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--text); }
-
-  /* HERO */
-  #hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 120px 60px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 80%);
-    pointer-events: none;
-  }
-
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    animation: orb-drift 8s ease-in-out infinite alternate;
-  }
-  .hero-orb-1 { width: 600px; height: 600px; background: rgba(124,106,255,0.12); top: -100px; right: -100px; }
-  .hero-orb-2 { width: 400px; height: 400px; background: rgba(0,212,170,0.08); bottom: -50px; left: 10%; animation-delay: -3s; }
-
-  @keyframes orb-drift {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(30px, 20px) scale(1.05); }
-  }
-
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    border: 1px solid rgba(0,212,170,0.25);
-    border-radius: 999px;
-    padding: 6px 14px;
-    width: fit-content;
-    margin-bottom: 32px;
-    animation: fade-up 0.6s ease both;
-  }
-  .hero-tag::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--accent2);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50% { opacity:0.4; transform:scale(0.7); }
-  }
-
-  .hero-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(3.5rem, 9vw, 8rem);
-    line-height: 0.92;
-    letter-spacing: -0.04em;
-    margin-bottom: 8px;
-    animation: fade-up 0.6s 0.1s ease both;
-  }
-  .hero-name .line2 {
-    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-    color: transparent;
-  }
-
-  .hero-role {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 24px;
-    letter-spacing: -0.01em;
-    animation: fade-up 0.6s 0.2s ease both;
-  }
-
-  .hero-desc {
-    max-width: 600px;
-    font-size: 0.8rem;
-    line-height: 1.9;
-    color: var(--muted);
-    margin-bottom: 48px;
-    animation: fade-up 0.6s 0.3s ease both;
-  }
-
-  .hero-ctas {
-    display: flex; gap: 16px; flex-wrap: wrap;
-    animation: fade-up 0.6s 0.4s ease both;
-  }
-
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 14px 28px;
-    background: var(--accent);
-    color: #fff;
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    border-radius: 6px;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    border: none; cursor: none;
-  }
-  .btn-primary:hover {
-    background: #9580ff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(124,106,255,0.4);
-  }
-
-  .btn-outline {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 14px 28px;
-    background: transparent;
-    color: var(--text);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s, transform 0.2s, background 0.2s;
-    cursor: none;
-  }
-  .btn-outline:hover {
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-    transform: translateY(-2px);
-  }
-
-  .hero-stats {
-    position: absolute;
-    right: 60px; bottom: 60px;
-    display: flex; gap: 48px;
-    animation: fade-up 0.6s 0.5s ease both;
-  }
-  .stat { text-align: right; }
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .stat-num span { color: var(--accent); }
-  .stat-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* SECTIONS */
-  section {
-    padding: 100px 60px;
-    position: relative;
-  }
-
-  .section-header {
-    display: flex; align-items: center; gap: 20px;
-    margin-bottom: 64px;
-  }
-  .section-num {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-    padding: 4px 10px;
-    border: 1px solid rgba(124,106,255,0.3);
-    border-radius: 4px;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* EXPERIENCE */
-  #experience { background: var(--surface); }
-
-  .exp-list { display: flex; flex-direction: column; gap: 2px; }
-
-  .exp-item {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 40px;
-    padding: 32px 0;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s;
-    position: relative;
-  }
-  .exp-item::before {
-    content: '';
-    position: absolute; left: -60px; top: 0; bottom: 0; width: 3px;
-    background: var(--accent);
-    transform: scaleY(0);
-    transition: transform 0.3s;
-    transform-origin: top;
-  }
-  .exp-item:hover::before { transform: scaleY(1); }
-
-  .exp-date {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    padding-top: 4px;
-  }
-  .exp-date .badge {
-    display: inline-block;
-    padding: 3px 8px;
-    background: rgba(0,212,170,0.1);
-    color: var(--accent2);
-    border-radius: 3px;
-    font-size: 0.6rem;
-    margin-bottom: 6px;
-  }
-
-  .exp-content {}
-  .exp-role {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    letter-spacing: -0.02em;
-  }
-  .exp-company {
-    font-size: 0.7rem;
-    color: var(--accent);
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-  }
-  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .exp-bullets li {
-    font-size: 0.72rem;
-    color: var(--muted);
-    line-height: 1.8;
-    padding-left: 16px;
-    position: relative;
-  }
-  .exp-bullets li::before {
-    content: '→';
-    position: absolute; left: 0;
-    color: var(--accent2);
-  }
-
-  /* SKILLS */
-  #skills {}
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2px;
-  }
-
-  .skill-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .skill-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--glow) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .skill-card:hover {
-    border-color: rgba(124,106,255,0.3);
-    transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-  }
-  .skill-card:hover::after { opacity: 1; }
-
-  .skill-icon {
-    width: 40px; height: 40px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    margin-bottom: 16px;
-    background: rgba(124,106,255,0.1);
-  }
-  .skill-cat {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-  }
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag {
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-    padding: 4px 9px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    transition: color 0.2s, border-color 0.2s;
-  }
-  .skill-card:hover .tag {
-    color: var(--text);
-    border-color: rgba(255,255,255,0.15);
-  }
-
-  /* PROJECTS */
-  #projects { background: var(--surface); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-  }
-
-  .project-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, transform 0.3s;
-    display: flex; flex-direction: column;
-  }
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transform: scaleX(0);
-    transition: transform 0.3s;
-    transform-origin: left;
-  }
-  .project-card:hover { border-color: rgba(124,106,255,0.25); transform: translateY(-4px); }
-  .project-card:hover::before { transform: scaleX(1); }
-
-  .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-  .project-icon { font-size: 1.5rem; }
-  .project-link {
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    text-decoration: none;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 4px;
-    transition: color 0.2s, border-color 0.2s;
-  }
-  .project-link:hover { color: var(--accent); border-color: rgba(124,106,255,0.4); }
-
-  .project-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
-  }
-  .project-desc {
-    font-size: 0.7rem;
-    color: var(--muted);
-    line-height: 1.9;
-    margin-bottom: 20px;
-    flex: 1;
-  }
-  .project-stack { display: flex; flex-wrap: wrap; gap: 6px; }
-  .stack-tag {
-    font-size: 0.58rem;
-    padding: 3px 8px;
-    background: rgba(124,106,255,0.08);
-    color: var(--accent);
-    border-radius: 3px;
-    border: 1px solid rgba(124,106,255,0.15);
-  }
-
-  /* PUBLICATIONS */
-  #publications {}
-
-  .pub-list { display: flex; flex-direction: column; gap: 16px; }
-
-  .pub-item {
-    display: flex; gap: 24px;
-    padding: 24px 28px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    align-items: flex-start;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .pub-item:hover { border-color: rgba(124,106,255,0.25); transform: translateX(4px); }
-
-  .pub-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: rgba(124,106,255,0.15);
-    line-height: 1;
-    min-width: 40px;
-  }
-  .pub-content {}
-  .pub-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 6px;
-    line-height: 1.5;
-  }
-  .pub-venue {
-    font-size: 0.65rem;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .pub-badge {
-    display: inline-block;
-    font-size: 0.58rem;
-    padding: 3px 9px;
-    border-radius: 3px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .pub-badge.accepted { background: rgba(0,212,170,0.1); color: var(--accent2); border: 1px solid rgba(0,212,170,0.2); }
-  .pub-badge.published { background: rgba(124,106,255,0.1); color: var(--accent); border: 1px solid rgba(124,106,255,0.2); }
-  .pub-badge.main { background: rgba(255,107,107,0.1); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
-
-  /* AWARDS */
-  #awards { background: var(--surface); }
-
-  .awards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-  }
-  .award-card {
-    padding: 24px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--bg);
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .award-card:hover { border-color: rgba(255,107,107,0.3); transform: translateY(-3px); }
-  .award-icon { font-size: 1.5rem; margin-bottom: 12px; }
-  .award-title { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
-  .award-sub { font-size: 0.62rem; color: var(--muted); }
-
-  /* EDUCATION */
-  #education {}
-
-  .edu-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .edu-card {
-    padding: 32px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: var(--surface);
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .edu-card:hover { border-color: rgba(124,106,255,0.25); }
-  .edu-card::before {
-    content: attr(data-gpa);
-    position: absolute;
-    right: -10px; top: -15px;
-    font-family: 'Syne', sans-serif;
-    font-size: 5rem;
-    font-weight: 800;
-    color: rgba(124,106,255,0.05);
-    pointer-events: none;
-  }
-  .edu-degree { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
-  .edu-school { font-size: 0.7rem; color: var(--accent); margin-bottom: 4px; }
-  .edu-period { font-size: 0.62rem; color: var(--muted); margin-bottom: 16px; }
-  .edu-gpa {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'Syne', sans-serif;
-    font-size: 1.3rem; font-weight: 800;
-    color: var(--accent2);
-  }
-  .edu-gpa span { font-size: 0.6rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-weight: 400; }
-
-  /* CONTACT */
-  #contact {
-    background: var(--bg);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  #contact .hero-orb { position: absolute; }
-
-  .contact-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 6vw, 5rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    margin-bottom: 24px;
-    line-height: 1;
-  }
-  .contact-sub { font-size: 0.75rem; color: var(--muted); max-width: 400px; margin: 0 auto 48px; line-height: 1.9; }
-
-  .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-
-  .contact-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 22px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s, border-color 0.2s, background 0.2s;
-  }
-  .contact-link:hover { color: var(--text); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
-  .contact-link svg { width: 14px; height: 14px; }
-
-  /* FOOTER */
-  footer {
-    padding: 24px 60px;
-    border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  footer p { font-size: 0.62rem; color: var(--muted); }
-
-  /* SCROLL REVEAL */
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    section { padding: 60px 24px; }
-    #hero { padding: 100px 24px 60px; }
-    .hero-stats { position: static; margin-top: 48px; justify-content: flex-start; }
-    .exp-item { grid-template-columns: 1fr; gap: 8px; }
-    .edu-cards { grid-template-columns: 1fr; }
-    .hero-name { font-size: clamp(2.5rem, 12vw, 5rem); }
-    footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Tonmoy Das">
+  <meta name="description" content="Tonmoy Das — prospective Fall 2027 PhD student in Electrical and Computer Engineering, speech enhancement, speech bandwidth extension, and audio signal processing.">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="Tonmoy Das | Prospective PhD Student">
+  <meta property="og:description" content="Research in speech enhancement, bandwidth extension and machine learning for audio. Prospective Fall 2027 PhD applicant.">
+  <title>Tonmoy Das | Prospective PhD Student</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      let saved = null;
+      try { saved = localStorage.getItem('tonmoy-color-mode'); } catch (error) {}
+      const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', saved === 'dark' || saved === 'light' ? saved : (systemDark ? 'dark' : 'light'));
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #303030;
+      --heading: #151515;
+      --muted: #777;
+      --border: #e6e6e6;
+      --link: #43566d;
+      --link-hover: #1d4677;
+      --green: #008000;
+      --red: #a60000;
+      --blue: #1647ac;
+      --page-width: 930px;
+      --topbar-bg: #ffffff;
+      --topbar-text: #252525;
+      --photo-bg: #f2f2f2;
+      --photo-text: #8a8f98;
+      --photo-caption: #777;
+      --news-date: #272727;
+      --paper-num: #888;
+      --venue: #555;
+      --icon: #000;
+      --icon-hover: #555;
+      --fineprint: #aaa;
+      --scroll-thumb: #999;
+      color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --bg: #1c1c1d;
+      --text: #d7d7dc;
+      --heading: #f0f0f2;
+      --muted: #aaaab0;
+      --border: #3b3b3f;
+      --link: #9eb7d4;
+      --link-hover: #c1d9f5;
+      --green: #7bc68a;
+      --red: #f18d8c;
+      --blue: #a0b9ff;
+      --topbar-bg: #1c1c1d;
+      --topbar-text: #ededf0;
+      --photo-bg: #343438;
+      --photo-text: #9999a3;
+      --photo-caption: #b0b0b8;
+      --news-date: #e8e8eb;
+      --paper-num: #a1a1a8;
+      --venue: #b0b0b7;
+      --icon: #ededf0;
+      --icon-hover: #a2bedb;
+      --fineprint: #96969f;
+      --scroll-thumb: #777;
+      color-scheme: dark;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Roboto, Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14.5px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--link-hover); }
+    a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+    .topbar { min-height: 55px; font-size: 13px; background: var(--topbar-bg); border-bottom: 1px solid transparent; }
+    .topbar-inner { width: min(calc(100% - 44px), var(--page-width)); min-height: 55px; margin: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+    .topbar-brand { grid-column: 2; font-weight: 500; }
+    .topbar-links { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 22px; }
+    .topbar a { color: var(--topbar-text); text-decoration: none; }
+    .topbar a:hover { color: var(--link-hover); text-decoration: underline; }
+    .topbar-links a[aria-current="page"] { font-weight: 500; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 34px; padding: 5px; border: 0; background: transparent; color: var(--topbar-text); cursor: pointer; border-radius: 4px; }
+    .theme-toggle:hover { color: var(--link-hover); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .theme-toggle svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    :root[data-theme="dark"] .icon-moon, :root:not([data-theme="dark"]) .icon-sun { display: none; }
+    .container { width: min(calc(100% - 44px), var(--page-width)); margin: 0 auto; }
+    main { padding-top: 50px; }
+    h1 { font-size: 36px; font-weight: 300; letter-spacing: -0.7px; line-height: 1.22; color: var(--heading); margin: 0 0 14px; }
+    h1 strong { font-weight: 700; }
+    h2 { color: var(--heading); font-size: 22px; font-weight: 300; line-height: 1.35; margin: 13px 0 9px; }
+    p { margin: 0 0 14px; }
+    strong { font-weight: 700; }
+    .hero::after { content: ""; display: block; clear: both; }
+    .profile-photo { float: right; width: 219px; margin: 50px 0 25px 37px; }
+    .photo-frame { width: 100%; height: 215px; background: var(--photo-bg); border-radius: 3px; position: relative; overflow: hidden; box-shadow: 0 2px 7px rgba(0,0,0,.15); }
+    .photo-frame img { width: 100%; height: 100%; position: absolute; inset: 0; display: block; object-fit: cover; object-position: center; }
+    .photo-fallback { width: 100%; height: 100%; display: grid; place-items: center; font-size: 53px; font-weight: 300; letter-spacing: -.05em; color: var(--photo-text); }
+    .profile-photo figcaption { color: var(--photo-caption); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10.5px; line-height: 1.6; margin-top: 10px; }
+    .intro p { max-width: 100%; }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .blue { color: var(--blue); }
+    .academic-list { margin: 0; padding: 0 0 0 37px; }
+    .academic-list li { padding-left: 0; margin: 0 0 16px; }
+    .academic-list li:last-child { margin-bottom: 0; }
+    .academic-list p { margin: 12px 0 0 0; }
+    .academic-list p:last-child { margin-bottom: 0; }
+    .academic-list .first-line { margin-top: 0; }
+    .section-divider { border: 0; height: 1px; margin: 23px 0 13px; background: var(--border); clear: both; }
+    .experience { padding-top: 0; }
+    .experience .academic-list li { margin-bottom: 18px; }
+    .experience .academic-list p { margin-top: 12px; }
+    .news-heading { margin-top: 1px; margin-bottom: 10px; font-size: 27px; text-transform: lowercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    .news-list { max-height: 208px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; padding-right: 10px; }
+    .news-entry { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 22px; padding: 11px 4px; }
+    .news-entry time { font-weight: 700; color: var(--news-date); }
+    .news-entry p { margin: 0; }
+    .publications { margin-top: 0; }
+    .publications h2 { margin-bottom: 15px; }
+    .paper-list { list-style: none; padding: 0; margin: 0; }
+    .paper-list li { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 7px; margin-bottom: 18px; }
+    .paper-number { color: var(--paper-num); }
+    .paper-title { margin: 0 0 1px; font-weight: 500; }
+    .paper-authors, .paper-venue { margin: 0; }
+    .paper-venue { font-style: italic; color: var(--venue); }
+    .paper-links { margin: 1px 0 0; font-size: 13px; }
+    .paper-links a { margin-right: 12px; }
+    .footer { border-top: 1px solid var(--border); margin-top: 28px; padding: 20px 0 22px; text-align: center; }
+    .socials { display:flex; align-items:center; justify-content:center; gap: 15px; margin-bottom: 7px; }
+    .socials a { display: inline-flex; justify-content:center; align-items:center; color: var(--icon); line-height: 1; text-decoration: none; width: 43px; height: 43px; }
+    .socials a:hover { color: var(--icon-hover); transform: translateY(-1px); }
+    .socials svg { width: 40px; height: 40px; fill: currentColor; }
+    .socials .cv { font-size: 34px; font-weight: 700; letter-spacing: -2px; }
+    .footer-note { font-size: 10.5px; color: var(--fineprint); }
+    @media (max-width: 700px) {
+      .topbar-links { gap: 14px; }
+      main { padding-top: 28px; }
+      .profile-photo { width: 177px; margin: 41px 0 16px 22px; }
+      .photo-frame { height: 185px; }
+      h1 { font-size: 33px; }
+      .news-entry { grid-template-columns: 110px minmax(0,1fr); gap: 15px; }
+    }
+    @media (max-width: 480px) {
+      .container { width: min(calc(100% - 32px), var(--page-width)); }
+      .topbar { min-height: 43px; }
+      .topbar-inner { width: min(calc(100% - 32px), var(--page-width)); min-height: 43px; display: flex; justify-content: space-between; gap: 8px; }
+      .topbar-links { gap: 13px; }
+      .theme-toggle { width: 28px; }
+      main { padding-top: 20px; }
+      h1 { font-size: 31px; margin-bottom: 11px; }
+      h2 { font-size: 21px; }
+      .profile-photo { width: 125px; margin: 9px 0 14px 17px; }
+      .photo-frame { height: 139px; }
+      .profile-photo figcaption { font-size: 9px; margin-top: 5px; }
+      .academic-list { padding-left: 23px; }
+      .news-entry { display: block; padding: 9px 2px; }
+      .news-entry time { display: block; margin-bottom: 4px; }
+      .socials { gap: 7px; }
+      .socials a { width: 42px; }
+      .socials svg { width: 35px; height: 35px; }
+      .socials .cv { font-size: 31px; }
+    }
+    @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .socials a:hover{transform:none;} }
+  </style>
 </head>
 <body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- NAV -->
-<nav id="navbar">
-  <a href="#" class="nav-logo">TD<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#publications">Research</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
-
-  <div class="hero-tag">Available for opportunities</div>
-  <h1 class="hero-name">
-    <span class="line1">TONMOY</span><br>
-    <span class="line2">DAS</span>
-  </h1>
-  <p class="hero-role">AI Engineer &amp; Researcher</p>
-  <p class="hero-desc">
-    AI Engineer at <strong style="color:var(--text)">Qanun Limited</strong> building production-grade multilingual document intelligence (DoceanAI) with RAG pipelines and LLM integration.
-    BSc. from <strong style="color:var(--text)">CUET</strong> (CGPA 3.86/4.00) &middot; ACL 2026 Main Conference &middot; 4 peer-reviewed papers.
-  </p>
-  <div class="hero-ctas">
-    <a href="mailto:tonmoy.das.cuet@gmail.com" class="btn-primary">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-      Get In Touch
-    </a>
-    <a href="https://github.com/tonmoy197" target="_blank" class="btn-outline">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      GitHub
-    </a>
-    <a href="https://www.linkedin.com/in/tonmoy-das-4a399a1b8/" target="_blank" class="btn-outline">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-      LinkedIn
-    </a>
-    <a href="https://www.researchgate.net/profile/Tonmoy-Das-10" target="_blank" class="btn-outline">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a12.67 12.67 0 00-.368 1.555 14.07 14.07 0 00-.11 1.765c0 .573.028 1.06.083 1.463.055.403.166.79.334 1.16.168.37.42.672.758.906.337.233.788.35 1.352.35.434 0 .84-.08 1.216-.242.376-.161.7-.386.97-.673.27-.288.47-.618.598-.99.127-.373.190-.773.190-1.2 0-.88-.215-1.583-.648-2.11-.432-.527-1.017-.79-1.755-.79-.368 0-.7.064-.995.193-.296.128-.547.309-.755.543zm-2.48 10.5h-3.09v1.48h1.06v5.31h3.09v-1.48h-1.06v-5.31zm-6.54-1.48H7.48v1.48h1.06v5.31h3.036v-1.48H10.5V9.02z"/></svg>
-      ResearchGate
-    </a>
-  </div>
-
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">4<span>+</span></div>
-      <div class="stat-label">Papers</div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <!-- <a class="topbar-brand" href="#about" aria-label="Tonmoy Das — About">Tonmoy Das</a> -->
+      <nav class="topbar-links" aria-label="Primary navigation">
+        <a href="#about" aria-current="page">about</a>
+        <a href="https://drive.google.com/file/d/1VQ4Wijdn6CbQHf1t5Q8vohSyI6rEn-Kc/view?usp=sharing" target="_blank" rel="noopener noreferrer">cv</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+        </button>
+      </nav>
     </div>
-    <div class="stat">
-      <div class="stat-num">3.86<span>/4</span></div>
-      <div class="stat-label">CGPA</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">1000<span>+</span></div>
-      <div class="stat-label">Problems Solved</div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="section-header reveal">
-    <span class="section-num">01</span>
-    <h2 class="section-title">Experience</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="exp-list">
-
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        <div class="badge">Current</div>
-        Apr&rsquo;26 &ndash; Present<br>On-site, Chattogram
+  </header>
+  <main class="container" id="top">
+    <section class="hero" id="about" aria-labelledby="name">
+      <figure class="profile-photo">
+        <div class="photo-frame">
+          <div class="photo-fallback" aria-hidden="true">TD</div>
+          <!-- Replace this GitHub-avatar image with profile.jpg if you prefer your own headshot. -->
+          <img src="https://github.com/tonmoy197.png" alt="Tonmoy Das" loading="eager" onerror="this.style.display='none'">
+        </div>
+        <figcaption>Tonmoy Das<br>Dhaka, Bangladesh</figcaption>
+      </figure>
+      <h1 id="name"><strong>Tonmoy</strong> Das</h1>
+      <div class="intro">
+        <p>I am a <strong>prospective PhD student for Fall 2027</strong>, seeking research opportunities in Electrical and Computer Engineering and related areas in the United States. My research interests include <span class="green">Speech Enhancement</span>, <span class="red">Speech Bandwidth Extension</span>, and <span class="blue">Neural and Auditory Signal Processing</span>, with an emphasis on machine learning for robust speech and communication.</p>
+        <p>I earned my B.Sc. in Electronics and Telecommunication Engineering from <strong>Chittagong University of Engineering and Technology (CUET)</strong>, where I worked with <strong>Dr. Nursadul Mamun</strong> at the RSPL Lab. My thesis focused on phase-aware speech enhancement using complex-valued deep learning and Conformer-based models. I also collaborated with researchers at <a href="https://www.gmu.edu/" target="_blank" rel="noopener noreferrer"><strong>George Mason University (GMU)</strong></a> on <a href="https://aclanthology.org/2026.acl-long.1925/" target="_blank" rel="noopener noreferrer">CIS-BWE</a>, our ACL 2026 paper on speech bandwidth extension. I am currently an <strong>AI Developer</strong> at Qanun Limited.</p>
       </div>
-      <div class="exp-content">
-        <div class="exp-role">AI Engineer</div>
-        <div class="exp-company">Qanun Limited &mdash; DoceanAI</div>
-        <ul class="exp-bullets">
-          <li>Building <strong>DoceanAI</strong>: production multilingual document intelligence platform supporting Bangla, Arabic, Math, and English &mdash; converting scanned documents into structured, AI-ready data for law firms, hospitals, and archives.</li>
-          <li>Developing end-to-end OCR + RAG pipelines: document field extraction, OCR post-correction, structured knowledge base construction, and LLM-based querying over digitized collections using <strong>LangChain</strong> and <strong>vector databases</strong>.</li>
-          <li>Integrating LLM APIs for intelligent document understanding; designing ingestion layers that feed directly into downstream RAG and LLM workflows.</li>
+      <section class="education" aria-labelledby="education-title">
+        <h2 id="education-title">Education</h2>
+        <ul class="academic-list">
+          <li>
+            <p class="first-line"><strong>Chittagong University of Engineering and Technology (CUET)</strong>, Bangladesh</p>
+            <p>B.Sc. in Electronics and Telecommunication Engineering</p>
+            <p>February 2020 ~ August 2025, CGPA: <strong>3.86/4.00</strong> (6th out of 58)</p>
+          </li>
+          <li>
+            <p class="first-line"><strong>Chaumuhani Government Saleh Ahmed College</strong>, Noakhali, Bangladesh</p>
+            <p>Higher Secondary Certificate</p>
+            <p>March 2017 ~ July 2019, GPA: <strong>5.00/5.00</strong></p>
+          </li>
         </ul>
+      </section>
+    </section>
+
+    <hr class="section-divider">
+    <section class="experience" id="experience" aria-labelledby="experience-title">
+      <h2 id="experience-title">Experience</h2>
+      <ul class="academic-list">
+        <li>
+          <p class="first-line"><strong>Qanun Limited (DoceanAI)</strong>, Bangladesh</p>
+          <p>April 2026 ~ Present, AI Developer</p>
+          <p><em>Project:</em> Multilingual legal-document intelligence, including hybrid retrieval, language-model systems, and processing a corpus of more than 31,000 legal PDFs.</p>
+        </li>
+        <li>
+          <p class="first-line"><strong>Research Collaboration — George Mason University (GMU)</strong>, Fairfax, VA, USA</p>
+          <p>July 2025 ~ Dec 2025, Collaborative speech bandwidth extension research</p>
+          <p><em>Collaborators:</em> Anomadarshi Barua, Tarikul Islam Tamiti, and Dr. Nursadul Mamun</p>
+          <p><em>Publication:</em> <a href="https://aclanthology.org/2026.acl-long.1925/" target="_blank" rel="noopener noreferrer">CIS-BWE: Chaos-Informed Speech Bandwidth Extension</a>, ACL 2026 Main Conference.</p>
+        </li>
+        <li>
+          <p class="first-line"><strong>RSPL Lab, CUET</strong>, Bangladesh</p>
+          <p>June 2024 ~ June 2025, Undergraduate Researcher</p>
+          <p><em>Supervisor:</em> Dr. Nursadul Mamun</p>
+          <p><em>Project:</em> Phase-aware speech enhancement using deep complex networks (DCTFEN), with joint magnitude–phase processing and a Conformer-based bottleneck.</p>
+        </li>
+
+      </ul>
+    </section>
+
+    <hr class="section-divider">
+    <section id="news" aria-labelledby="news-title">
+      <h2 class="news-heading" id="news-title">news</h2>
+      <div class="news-list" aria-label="Recent news" tabindex="0">
+        <div class="news-entry"><time datetime="2026">May 2026</time><p><a href="https://arxiv.org/html/2507.15970v3" target="_blank" rel="noopener noreferrer">CIS-BWE: Chaos-Informed Speech Bandwidth Extension</a> was <strong>published</strong> at the <strong>ACL 2026 Main Conference</strong>.</p></div>
+        <div class="news-entry"><time datetime="2026-04">Apr 2026</time><p>Joined <strong>Qanun Limited</strong> as an AI Developer, working on multilingual document intelligence and retrieval systems.</p></div>
+        <div class="news-entry"><time datetime="2025">Dec 2025</time><p>Two co-authored papers appeared at <strong>IEEE ICCIT 2025</strong>, on robust speech emotion recognition and Bangla visual question answering.</p></div>
+        <div class="news-entry"><time datetime="2025">July 2025</time><p>Graduated from <a href="https://www.cuet.ac.bd" target="_blank" rel="noopener">CUET</a> with a
+                B.Sc. in ETE, CGPA 3.86/4.00</p></div>
+        <div class="news-entry"><time datetime="2025">Dec 2024</time><p><strong> First Paper </strong></strong><a href="https://doi.org/10.1109/ECCE64574.2025.11013794" target="_blank" rel="noopener noreferrer">Attention-based Multi-level Feature Fusion for Multilingual Speech Emotion Recognition</a> was <strong>Accepted</strong> at IEEE ECCE 2025.</p></div>
+        <div class="news-entry"><time datetime="2023">Oct 2023</time><p><strong>Won</strong> First Place in the DecaHertz Programming Contest at CUET</p></div>
+        <div class="news-entry"><time datetime="2023">May 2023</time><p>Crossed <strong>1000+</strong> competitive programming problems solved on Codeforces, AtCoder and
+                LeetCode.</p></div>
+
       </div>
-    </div>
+    </section>
 
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        Nov&rsquo;25 &ndash; Jan&rsquo;26
-      </div>
-      <div class="exp-content">
-        <div class="exp-role">AI Research Engineer &mdash; IRIIC</div>
-        <div class="exp-company">United International University (UIU) &middot; Advisor: Prof. Khondaker Abdullah Al Mamun</div>
-        <ul class="exp-bullets">
-          <li><strong>Virtual Hospital</strong>: AI-powered CMED-based monitoring for real-time abnormality detection (Stroke, TIA, IHD, HTN, DM, CKD); lightweight offline-capable inference pipeline with privacy-preserving encryption and SMS/voice alerts for low-resource rural settings.</li>
-        </ul>
-      </div>
-    </div>
+    <hr class="section-divider">
+    <section class="publications" id="publications" aria-labelledby="publication-title">
+      <h2 id="publication-title">Selected Publications</h2>
+      <ol class="paper-list">
+        <li>
+          <span class="paper-number">[1]</span>
+          <div><p class="paper-title"><a href="https://arxiv.org/html/2507.15970v3" target="_blank" rel="noopener noreferrer">CIS-BWE: Chaos-Informed Speech Bandwidth Extension</a></p>
+          <p class="paper-authors">Tarikul Islam Tamiti, <strong>Tonmoy Das</strong>, Nursadul Mamun, Anomadarshi Barua</p>
+          <p class="paper-venue">ACL 2026, Main Conference</p></div>
+        </li>
+        <li>
+          <span class="paper-number">[2]</span>
+          <div><p class="paper-title"><a href="https://doi.org/10.1109/ECCE64574.2025.11013794" target="_blank" rel="noopener noreferrer">Attention-based Multi-level Feature Fusion for Multilingual Speech Emotion Recognition</a></p>
+          <p class="paper-authors"><strong>Tonmoy Das</strong>, Fariaz Islam, Nursadul Mamun</p>
+          <p class="paper-venue">IEEE ECCE 2025</p><p class="paper-links"><a href="https://github.com/tonmoy197/multilingual_ser" target="_blank" rel="noopener noreferrer">code</a></p></div>
+        </li>
+        <li>
+          <span class="paper-number">[3]</span>
+          <div><p class="paper-title"><a href="https://ieeexplore.ieee.org/document/11491353" target="_blank" rel="noopener noreferrer">EENet: Bridging Speech Enhancement and Deep Learning for Robust Emotion Recognition</a></p>
+          <p class="paper-authors">Nur Alam, <strong>Tonmoy Das</strong>, Nursadul Mamun</p>
+          <p class="paper-venue">IEEE ICCIT 2025</p></div>
+        </li>
+        <li>
+          <span class="paper-number">[4]</span>
+          <div><p class="paper-title"><a href="https://ieeexplore.ieee.org/document/11491619" target="_blank" rel="noopener noreferrer">Bangla Visual Question Answering Using Gated Cross-Attention and Reinforcement-Optimized Fusion</a></p>
+          <p class="paper-authors">Md. Fariaz Islam, Mostafizur Rahman Shuvo, Refatul Islam Roni, <strong>Tonmoy Das</strong>, Isfar Nayen, Hasib Hasnat</p>
+          <p class="paper-venue">IEEE ICCIT 2025</p></div>
+        </li>
+      </ol>
+    </section>
 
-    <div class="exp-item reveal">
-      <div class="exp-date">
-        Jun &ndash; Jul&rsquo;24
-      </div>
-      <div class="exp-content">
-        <div class="exp-role">Software Engineering &mdash; Industrial Attachment</div>
-        <div class="exp-company">Cefalo Bangladesh Ltd. &amp; Riseup Labs Ltd.</div>
-        <ul class="exp-bullets">
-          <li><strong>Cefalo</strong>: full-stack development under agile methodology; code reviews and CI/CD workflows in an international engineering environment.</li>
-          <li><strong>Riseup Labs</strong>: built marketplace web application with <strong>Laravel</strong> and <strong>SQL</strong> (frontend + backend).</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- PUBLICATIONS -->
-<section id="publications">
-  <div class="section-header reveal">
-    <span class="section-num">02</span>
-    <h2 class="section-title">Publications</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="pub-list">
-
-    <div class="pub-item reveal">
-      <div class="pub-num">01</div>
-      <div class="pub-content">
-        <div class="pub-title">Attention-based Multi-level Feature Fusion for Multilingual Speech Emotion Recognition</div>
-        <div class="pub-venue">ECCE 2025, IEEE, CUET &middot; <strong>Tonmoy Das</strong>, Fariaz Islam, Nursadul Mamun</div>
-        <span class="pub-badge published">Published</span>
-      </div>
-    </div>
-
-    <div class="pub-item reveal">
-      <div class="pub-num">02</div>
-      <div class="pub-content">
-        <div class="pub-title">CIS-BWE: Chaos-Informed Speech Bandwidth Extension</div>
-        <div class="pub-venue">ACL 2026, Main Conference &middot; Tarikul Islam Tamiti, <strong>Tonmoy Das</strong>, Nursadul Mamun, Anomadarshi Barua</div>
-        <span class="pub-badge main">ACL 2026 Main Conference</span>
-      </div>
-    </div>
-
-    <div class="pub-item reveal">
-      <div class="pub-num">03</div>
-      <div class="pub-content">
-        <div class="pub-title">EENet: Bridging Speech Enhancement and Deep Learning for Robust Emotion Recognition</div>
-        <div class="pub-venue">ICCIT 2025, IEEE &middot; Nur Alam, <strong>Tonmoy Das</strong>, Nursadul Mamun</div>
-        <span class="pub-badge accepted">Accepted</span>
-      </div>
-    </div>
-
-    <div class="pub-item reveal">
-      <div class="pub-num">04</div>
-      <div class="pub-content">
-        <div class="pub-title">Bangla Visual Question Answering Using Gated Cross-Attention and Reinforcement-Optimized Fusion</div>
-        <div class="pub-venue">ACAI 2025 &middot; Md. Fariaz Islam, Mostafizur Rahman Shuvo, Refatul Islam Roni, <strong>Tonmoy Das</strong>, Isfar Nayen, Hasib Hasnat</div>
-        <span class="pub-badge accepted">Accepted</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-header reveal">
-    <span class="section-num">03</span>
-    <h2 class="section-title">Technical Skills</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="skills-grid">
-    <div class="skill-card reveal">
-      <div class="skill-icon">🤖</div>
-      <div class="skill-cat">LLMs &amp; APIs</div>
-      <div class="skill-tags">
-        <span class="tag">OpenAI GPT (API)</span><span class="tag">Hugging Face Transformers</span><span class="tag">LLaMA</span>
-        <span class="tag">Phi-3</span><span class="tag">Gemini API</span><span class="tag">Prompt Engineering</span>
-        <span class="tag">LoRA/QLoRA Fine-tuning</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🔍</div>
-      <div class="skill-cat">RAG &amp; Vector Search</div>
-      <div class="skill-tags">
-        <span class="tag">LangChain</span><span class="tag">LlamaIndex</span><span class="tag">Pinecone</span>
-        <span class="tag">FAISS</span><span class="tag">Weaviate</span><span class="tag">Semantic Chunking</span>
-        <span class="tag">OpenAI Embeddings</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🕸️</div>
-      <div class="skill-cat">AI Agent Frameworks</div>
-      <div class="skill-tags">
-        <span class="tag">CrewAI</span><span class="tag">LangChain Agents</span><span class="tag">AutoGen</span>
-        <span class="tag">Multi-Agent Orchestration</span><span class="tag">Tool Use</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🧠</div>
-      <div class="skill-cat">ML &amp; Deep Learning</div>
-      <div class="skill-tags">
-        <span class="tag">PyTorch</span><span class="tag">TensorFlow</span><span class="tag">Keras</span>
-        <span class="tag">Scikit-learn</span><span class="tag">HF Datasets</span><span class="tag">GANs</span>
-        <span class="tag">Transformers</span><span class="tag">CNNs</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🚀</div>
-      <div class="skill-cat">MLOps &amp; Deployment</div>
-      <div class="skill-tags">
-        <span class="tag">Docker</span><span class="tag">FastAPI</span><span class="tag">CI/CD (GitHub Actions)</span>
-        <span class="tag">AWS</span><span class="tag">Git/GitHub</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">💾</div>
-      <div class="skill-cat">Databases</div>
-      <div class="skill-tags">
-        <span class="tag">PostgreSQL</span><span class="tag">MongoDB</span><span class="tag">Neo4j</span><span class="tag">Pinecone</span>
-      </div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">💻</div>
-      <div class="skill-cat">Programming Languages</div>
-      <div class="skill-tags">
-        <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">SQL</span>
-        <span class="tag">C/C++</span><span class="tag">MATLAB</span><span class="tag">LaTeX</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-header reveal">
-    <span class="section-num">04</span>
-    <h2 class="section-title">Key Projects</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="projects-grid">
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">🏫</div>
-        <a href="https://github.com/tonmoy197/rag_chatgot_for_CUET_website" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">RAG Chatbot for CUET Website</div>
-      <p class="project-desc">Full end-to-end RAG pipeline: scraped and indexed an entire university website, applied semantic chunking (200-token windows with overlap) for high-recall retrieval, and stored embeddings in Pinecone. Used LangChain to orchestrate retrieval and generation; integrated OpenAI GPT for context-aware, grounded responses about admissions, courses, and notices. Deployed via FastAPI REST endpoint, containerized with Docker, structured for CI/CD with GitHub Actions.</p>
-      <div class="project-stack">
-        <span class="stack-tag">LangChain</span><span class="stack-tag">Pinecone</span>
-        <span class="stack-tag">OpenAI GPT</span><span class="stack-tag">FastAPI</span><span class="stack-tag">Docker</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">🔬</div>
-        <a href="https://github.com/tonmoy197/multi_agent_academic_research_assistant" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">ResearchPilot — Multi-Agent Academic Research Assistant</div>
-      <p class="project-desc">Architected a 4-agent CrewAI system: queries arXiv &amp; Semantic Scholar APIs; extracts methodology, results, and limitations from PDFs using LlamaIndex RAG; synthesizes structured literature reviews; identifies open research gaps via live web search. Integrated AutoGen reflection loop where agents debate and iteratively self-correct summaries. Exposed as FastAPI REST service with Docker; supports English and Bengali academic content.</p>
-      <div class="project-stack">
-        <span class="stack-tag">CrewAI</span><span class="stack-tag">LlamaIndex</span>
-        <span class="stack-tag">AutoGen</span><span class="stack-tag">FastAPI</span><span class="stack-tag">Docker</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">🇧🇩</div>
-        <a href="https://huggingface.co/tonmoydascuet/bangla-phi3-qlora-checkpoints" target="_blank" class="project-link">HF Hub ↗</a>
-      </div>
-      <div class="project-title">Bengali Academic LLM — QLoRA Fine-tuning</div>
-      <p class="project-desc">Fine-tuned Phi-3-Mini-3.8B on 52K Bengali instruction pairs using QLoRA (4-bit NF4, r=16) on constrained GPU hardware; full pipeline with BitsAndBytesConfig, PEFT, SFTTrainer, gradient checkpointing, and paged_adamw_8bit optimizer. Evaluated on XQuAD-bn benchmark for Bengali reading comprehension; merged LoRA adapter with base model and published to Hugging Face Hub with complete model card for public use.</p>
-      <div class="project-stack">
-        <span class="stack-tag">Phi-3-Mini-3.8B</span><span class="stack-tag">QLoRA</span>
-        <span class="stack-tag">PEFT</span><span class="stack-tag">SFTTrainer</span><span class="stack-tag">HF Hub</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">🚗</div>
-        <a href="https://github.com/tonmoy197/Car_license_plate_recognition" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">Bangla Car License Plate Recognition (ALPR)</div>
-      <p class="project-desc">Production-grade Automatic License Plate Recognition system for Bangladeshi vehicles, combining YOLOv10 for plate detection with a custom EasyOCR model fine-tuned for Bengali character recognition. Wrapped in a FastAPI REST API, containerized with Docker, and deployed to Render cloud — fully CI/CD-ready with zero-downtime redeployment on push.</p>
-      <div class="project-stack">
-        <span class="stack-tag">YOLOv10</span><span class="stack-tag">EasyOCR</span>
-        <span class="stack-tag">FastAPI</span><span class="stack-tag">Docker</span><span class="stack-tag">Render</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">👁️</div>
-        <a href="https://github.com/tonmoy197/Visual-Question-Answering-for-Assistive-Technology" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">Visual Question Answering for Assistive Technology</div>
-      <p class="project-desc">Lightweight VQA model leveraging CLIP vision-language embeddings, trained on 20K+ real-world image-question pairs from the VizWiz 2023 dataset — images taken by blind or low-vision users. Achieved <strong>61.5% validation accuracy</strong> on the VizWiz 2023 challenge; model handles ambiguous, low-quality images and open-ended natural language questions, suitable for real-time assistive deployment.</p>
-      <div class="project-stack">
-        <span class="stack-tag">CLIP</span><span class="stack-tag">PyTorch</span>
-        <span class="stack-tag">VizWiz 2023</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">🎙️</div>
-        <a href="https://github.com/tonmoy197/multilingual_ser" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">Multilingual Speech Emotion Recognition</div>
-      <p class="project-desc">Hybrid CNN-Transformer architecture for classifying 7 emotions from raw audio; CNN layers extract local spectro-temporal features while the Transformer Encoder captures global sequence dependencies. Trained on 10K+ audio files across 5 datasets (English: CREMA-D, RAVDESS, SAVEE, TESS; Bangla: SUBESCO); features include MFCC, Mel Spectrogram, Chroma, Spectral Contrast, Tonnetz, and ZCR. <em>IEEE ECCE 2025 &mdash; First Author.</em></p>
-      <div class="project-stack">
-        <span class="stack-tag">PyTorch</span><span class="stack-tag">CNN-Transformer</span>
-        <span class="stack-tag">CREMA-D</span><span class="stack-tag">RAVDESS</span><span class="stack-tag">SUBESCO</span><span class="stack-tag">IEEE ECCE 2025</span>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div class="project-icon">⚙️</div>
-        <a href="https://github.com/tonmoy197/transformer_from_scratch" target="_blank" class="project-link">GitHub ↗</a>
-      </div>
-      <div class="project-title">Transformer from Scratch — Seq2Seq NLP</div>
-      <p class="project-desc">Implemented the full Transformer architecture from Vaswani et al. (2017) from scratch in PyTorch for English&harr;Russian and English&harr;Italian translation, including multi-head attention, positional encoding, masked self-attention, and label smoothing. Complete training loop with learning rate warm-up scheduling, beam search inference, BLEU score evaluation, and multi-head attention visualization; extended to fine-tune DeepSpeech for Bangla ASR in disaster-response scenarios.</p>
-      <div class="project-stack">
-        <span class="stack-tag">PyTorch</span><span class="stack-tag">Multi-head Attention</span>
-        <span class="stack-tag">Beam Search</span><span class="stack-tag">BLEU</span><span class="stack-tag">DeepSpeech</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-
-<!-- AWARDS -->
-<section id="awards">
-  <div class="section-header reveal">
-    <span class="section-num">05</span>
-    <h2 class="section-title">Awards &amp; Certifications</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="awards-grid">
-    <div class="award-card reveal">
-      <div class="award-icon">🏆</div>
-      <div class="award-title">Champion — Programming Contest</div>
-      <div class="award-sub">DecaHertz CUET, 2023</div>
-    </div>
-    <!-- <div class="award-card reveal">
-      <div class="award-icon">🌏</div>
-      <div class="award-title">ICPC Asia Dhaka Regionalist</div>
-      <div class="award-sub">2023</div>
-    </div> -->
-    <div class="award-card reveal">
-      <div class="award-icon">⚡</div>
-      <div class="award-title">1000+ Problems Solved</div>
-      <div class="award-sub">Codeforces (Rating 1277) &middot; AtCoder &middot; LeetCode</div>
-    </div>
-    <div class="award-card reveal">
-      <div class="award-icon">🎓</div>
-      <div class="award-title">Advanced Learning Algorithms</div>
-      <div class="award-sub">Coursera &middot; Stanford / DeepLearning.AI</div>
-    </div>
-    <div class="award-card reveal">
-      <div class="award-icon">📜</div>
-      <div class="award-title">Supervised Machine Learning</div>
-      <div class="award-sub">Coursera &middot; Stanford / DeepLearning.AI</div>
-    </div>
-    <div class="award-card reveal">
-      <div class="award-icon">🌟</div>
-      <div class="award-title">HSC Perfect GPA</div>
-      <div class="award-sub">5.00 / 5.00 &middot; Chaumuhani Govt. Saleh Ahmed College</div>
-    </div>
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section id="education" style="background: var(--bg);">
-  <div class="section-header reveal">
-    <span class="section-num">06</span>
-    <h2 class="section-title">Education</h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="edu-cards">
-    <div class="edu-card reveal" data-gpa="3.86">
-      <div class="edu-degree">B.Sc. in Electronics &amp; Telecommunication Engineering (ETE)</div>
-      <div class="edu-school">Chittagong University of Engineering and Technology (CUET)</div>
-      <div class="edu-period">Feb&rsquo;20 &ndash; Aug&rsquo;25</div>
-      <div class="edu-gpa">3.86 <span>/ 4.00 CGPA</span></div>
-    </div>
-    <div class="edu-card reveal" data-gpa="5.00">
-      <div class="edu-degree">Higher Secondary Certificate (HSC)</div>
-      <div class="edu-school">Chaumuhani Govt. Saleh Ahmed College, Noakhali</div>
-      <div class="edu-period">Mar&rsquo;17 &ndash; Jul&rsquo;19</div>
-      <div class="edu-gpa">5.00 <span>/ 5.00 GPA</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="hero-orb hero-orb-1" style="opacity:0.5;"></div>
-  <div class="hero-orb hero-orb-2" style="opacity:0.5;"></div>
-
-  <p class="section-num reveal" style="display:inline-block; margin-bottom:24px;">07</p>
-  <h2 class="contact-title reveal">Let&rsquo;s Build<br>Something.</h2>
-  <p class="contact-sub reveal">Open to AI engineering roles, research collaborations, and interesting problems in LLMs, RAG systems, and multilingual NLP.</p>
-
-  <div class="contact-links reveal">
-    <a href="mailto:tonmoy.das.cuet@gmail.com" class="contact-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-      tonmoy.das.cuet@gmail.com
-    </a>
-    <a href="https://www.linkedin.com/in/tonmoy-das-4a399a1b8/" target="_blank" class="contact-link">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-      LinkedIn
-    </a>
-    <a href="https://github.com/tonmoy197" target="_blank" class="contact-link">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      github.com/tonmoy197
-    </a>
-    <a href="https://www.researchgate.net/profile/Tonmoy-Das-10" target="_blank" class="contact-link">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a12.67 12.67 0 00-.368 1.555 14.07 14.07 0 00-.11 1.765c0 .573.028 1.06.083 1.463.055.403.166.79.334 1.16.168.37.42.672.758.906.337.233.788.35 1.352.35.434 0 .84-.08 1.216-.242.376-.161.7-.386.97-.673.27-.288.47-.618.598-.99.127-.373.190-.773.190-1.2 0-.88-.215-1.583-.648-2.11-.432-.527-1.017-.79-1.755-.79-.368 0-.7.064-.995.193-.296.128-.547.309-.755.543zm-2.48 10.5h-3.09v1.48h1.06v5.31h3.09v-1.48h-1.06v-5.31zm-6.54-1.48H7.48v1.48h1.06v5.31h3.036v-1.48H10.5V9.02z"/></svg>
-      ResearchGate
-    </a>
-    <a href="tel:+8801839034741" class="contact-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.7 12.1 19.79 19.79 0 0 1 1.65 3.55 2 2 0 0 1 3.62 1.36h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      +880 1839 034741
-    </a>
-  </div>
-</section>
-
-<footer>
-  <p>&copy; 2026 Tonmoy Das &middot; Dhaka, Bangladesh</p>
-  <p>Built with HTML &middot; CSS &middot; JavaScript</p>
-</footer>
-
-<script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-  });
-
-  function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '6px';
-      cursor.style.height = '6px';
-      ring.style.width = '48px';
-      ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(124,106,255,0.8)';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '12px';
-      cursor.style.height = '12px';
-      ring.style.width = '36px';
-      ring.style.height = '36px';
-      ring.style.borderColor = 'rgba(124,106,255,0.5)';
-    });
-  });
-
-  // Navbar scroll
-  const nav = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
-  });
-
-  // Scroll reveal
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
+    <footer class="footer">
+      <nav class="socials" aria-label="Academic profiles and contact">
+        <a class="cv" href="https://drive.google.com/file/d/1VQ4Wijdn6CbQHf1t5Q8vohSyI6rEn-Kc/view?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="Curriculum vitae" title="CV">CV</a>
+        <a href="mailto:tonmoy.das.cuet@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5zm1.9-.6L12 11.3l8.1-6.4a1 1 0 0 0-.6-.2h-15a1 1 0 0 0-.6.2m16.4 2.3-7.5 5.9a1.3 1.3 0 0 1-1.6 0L3.7 7.2v11.3c0 .44.36.8.8.8h15c.44 0 .8-.36.8-.8z"/></svg>
+        </a>
+        <a href="https://github.com/tonmoy197" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.82c.56.1.77-.24.77-.53v-2.14c-3.13.68-3.79-1.33-3.79-1.33-.51-1.29-1.25-1.63-1.25-1.63-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 .72 2.61.51 3.25.39.1-.72.39-1.21.71-1.49-2.5-.28-5.14-1.25-5.14-5.56 0-1.22.44-2.22 1.16-3.01-.12-.28-.5-1.43.11-2.98 0 0 .94-.3 3.08 1.15a10.8 10.8 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.55.23 2.7.11 2.98.72.79 1.16 1.79 1.16 3.01 0 4.32-2.65 5.28-5.17 5.55.4.35.75 1.03.75 2.07v3.08c0 .29.2.64.77.53A11.2 11.2 0 0 0 12 .8"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/tonmoy-das-4a399a1b8/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2M8 18.5H5.2V9.4H8zM6.6 8.2A1.63 1.63 0 1 1 6.6 4.94a1.63 1.63 0 0 1 0 3.26m11.9 10.3h-2.8v-4.43c0-1.06-.02-2.42-1.47-2.42-1.48 0-1.71 1.15-1.71 2.34v4.51H9.7V9.4h2.7v1.24h.04a2.97 2.97 0 0 1 2.67-1.47c2.85 0 3.39 1.88 3.39 4.32z"/></svg>
+        </a>
+        <a href="https://scholar.google.com/citations?user=hIP_Om0AAAAJ" target="_blank" rel="noopener noreferrer" aria-label="Google Scholar" title="Google Scholar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 8-10 8L2 10z"/><path d="M6 14v4.2c0 1.6 2.7 3 6 3s6-1.4 6-3V14l-6 4.5z"/><path d="M20.5 11.2V18h1.4v-7.9z"/></svg>
+        </a>
+      </nav>
+      <div class="footer-note">© Copyright 2026 Tonmoy Das. Academic layout inspired by al-folio. Built with HTML and CSS.</div>
+    </footer>
+  </main>
+  <script>
+    (function () {
+      const toggle = document.getElementById('themeToggle');
+      const root = document.documentElement;
+      function syncToggle() {
+        const isDark = root.getAttribute('data-theme') === 'dark';
+        const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('title', label);
+        toggle.setAttribute('aria-pressed', String(isDark));
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        if (themeColor) themeColor.setAttribute('content', isDark ? '#1c1c1d' : '#ffffff');
       }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-  document.querySelectorAll('.reveal').forEach((el, i) => {
-    el.style.transitionDelay = (i % 4) * 0.08 + 's';
-    observer.observe(el);
-  });
-</script>
+      toggle.addEventListener('click', function () {
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('tonmoy-color-mode', next); } catch (error) {}
+        syncToggle();
+      });
+      syncToggle();
+    })();
+  </script>
 </body>
 </html>
